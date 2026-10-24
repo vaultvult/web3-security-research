@@ -1,0 +1,19 @@
+# Tenor Labs (Morpho Midnight) - Dust Fill Collateral Rounding Exploit
+
+## Severity: High (Unsubmitted due to $250 deposit requirement)
+
+## Summary
+The `CollateralTransferLib.transferCollaterals` function in Tenor Labs uses `mulDivDown` to calculate pro-rata collateral transfers. If a borrower has accrued interest (making debt slightly larger than collateral), a tiny "dust fill" (e.g., 1 wei) causes the calculated collateral to transfer to round down to `0`. This leaves the target position with unbacked debt and an artificially inflated LTV.
+
+## Proof of Concept
+The included Foundry test (`DustFillExploit.t.sol`) proves this vulnerability locally. 
+
+## How to run:
+1. `forge install`
+2. `forge test --match-contract DustFillExploit -vvv`
+
+## Output:
+```text
+[PASS] testDustFillRoundsCollateralToZero() (gas: 65335)
+Logs:
+  Collateral transferred to target: 0
